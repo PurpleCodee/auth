@@ -1,20 +1,41 @@
 import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './auth/local-auth.guard'; //Importo el LocalAuthGuard para proteger la ruta de logout
+import { AuthService } from './auth/auth.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private authService: AuthService
+  ) {}
 
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
-  //End point del login
-  @UseGuards(AuthGuard('local'))
-  @Post('auth/login')
-  async login(@Request() req) {
+  /*End point del login que utiliza el LocalAuthGuard
+  para autenticar al usuario y generar un token de acceso JWT*/
+    @UseGuards(LocalAuthGuard)
+    @Post('auth/login')
+    async login(@Request() req) {
+      return this.authService.login(req.user);
+  }
+
+ //End point del logout
+    @UseGuards(LocalAuthGuard)
+    @Post('auth/logout')
+    async logout(@Request() req) {
+      return req.logout();
+  }  
+
+  /*End point protegido por el JwtAuthGuard, solo accesible para usuarios autenticados con un token JWT válido
+   En este end point compruebo el usuario autenticado */
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
     return req.user;
   }
 }
