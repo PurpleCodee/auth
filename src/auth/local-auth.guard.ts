@@ -5,4 +5,5 @@ import { AuthGuard } from '@nestjs/passport';
 del usuario y la contraseña valida el acceso si son correctas con LocalStrategy, si son correctas
 añade req.user, y si son incorrectas bloquea el acceso*/
 @Injectable()
-export class LocalAuthGuard extends AuthGuard('local') {}
+export class LocalAuthGuard extends AuthGuard('local') {
+}

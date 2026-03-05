@@ -11,11 +11,6 @@ export class AppController {
     private authService: AuthService
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   /*End point del login que utiliza el LocalAuthGuard
   para autenticar al usuario y generar un token de acceso JWT*/
     @UseGuards(LocalAuthGuard)

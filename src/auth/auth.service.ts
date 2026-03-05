@@ -9,8 +9,9 @@ export class AuthService {
     private jwtService: JwtService // Inyecto el servicio JWT en el constructor
   ) {}
 
+  // El método validateUser se encarga de validar las credenciales del usuario
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+    const user = await this.usersService.findByUsername(username);
     if (user && user.password === pass) {
       const { password, ...result } = user;
       return result;
@@ -18,13 +19,18 @@ export class AuthService {
     return null;
   }
 
-  // Método para generar un token de acceso JWT después de validar al usuario
+  // El método login genera un token de acceso JWT para el usuario autenticado
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-    return {
-      access_token: this.jwtService.sign(payload),
-      //Me devuelve el token de acceso con nombre de usuario y ID
-    };
+    const validUser = await this.validateUser(user.username, user.password);
+    if (validUser) {
+      const payload = { username: validUser.username, sub: validUser.id_user };
+      return {
+        access_token: this.jwtService.sign(payload),
+      };
+    }
+    return null;
   }
 }
+
+
 
