@@ -7,7 +7,6 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private authService: AuthService
   ) {}
 
@@ -19,12 +18,6 @@ export class AppController {
       return this.authService.login(req.user);
   }
 
- //End point del logout
-    @UseGuards(LocalAuthGuard)
-    @Post('auth/logout')
-    async logout(@Request() req) {
-      return req.logout();
-  }  
 
   /*End point protegido por el JwtAuthGuard, solo accesible para usuarios autenticados con un token JWT válido
    En este end point compruebo el usuario autenticado */
