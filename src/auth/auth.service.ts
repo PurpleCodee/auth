@@ -21,7 +21,7 @@ export class AuthService {
 
   // El método login genera un token de acceso JWT para el usuario autenticado
   async login(user: any) {
-    const payload = { username: user.username, userID: user.id_user };
+    const payload = { userId: user.id_user, username: user.username };
 
     return {
       access_token: this.jwtService.sign(payload),
