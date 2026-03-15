@@ -1,27 +1,32 @@
-import { Injectable } from "@nestjs/common";
-import { UsersService } from "../users/users.service";
-import { JwtService } from "@nestjs/jwt"; // Importo el servicio JWT para generar tokens de acceso
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService, // Inyecto el servicio JWT en el constructor
+    private jwtService: JwtService,
   ) {}
 
-  // El método validateUser se encarga de validar las credenciales del usuario
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
+
     if (user && user.password === pass) {
       const { password, ...result } = user;
       return result;
     }
+
     return null;
   }
 
-  // El método login genera un token de acceso JWT para el usuario autenticado
   async login(user: any) {
-    const payload = { userId: user.id_user, username: user.username };
+    const payload = {
+      userId: user.id_user,
+      username: user.username,
+      fullName: user.fullName ?? null,
+      jobTitle: user.jobTitle ?? null,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),
